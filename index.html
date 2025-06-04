@@ -5,6 +5,13 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "7a6b9e196a014d81a43206ffc7e08b86"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
   <title>Lab 9</title>
 
   <style>
@@ -31,7 +38,7 @@
     }
 
     main {
-      width: 800px;
+      width: 600px;
     }
 
     #error-btns {
@@ -92,13 +99,96 @@
     form.addEventListener('submit', e => {
       e.preventDefault();
       let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try{
+        let firstNum = Number(document.querySelector('#first-num').value);
+        let secondNum = Number(document.querySelector('#second-num').value);
+        let operator = document.querySelector('#operator').value;
+        if(isNaN(firstNum) || isNaN(secondNum) || secondNum == 0 && operator == '/'){
+          throw new Error("Bad Input")
+        }
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch(err){
+        alert(err.message);
+        output.innerHTML = "NaN";
+      } finally{
+        alert("Calculation Done!");
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+
+    errorBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        let text = btn.innerHTML;
+      switch(text){
+        case 'Console Log':
+          console.log("message console log");
+          break;
+        case 'Console Error':
+          console.error("console error message");
+          break;
+        case 'Console Count':
+          console.count("console count");
+          break;
+        case 'Console Warn':
+          console.warn("console warn");
+          break;
+        case 'Console Assert':
+          console.assert(false,"assert is set to false");
+          break;
+        case 'Console Clear':
+          console.clear();
+          break;
+        case 'Console Dir':
+          const element = document.querySelector('main');
+          console.dir(element);
+          break;
+        case 'Console dirxml':
+          const element1 = document.querySelector('main');
+          console.dir(element1);
+          break;
+        case 'Console Group Start':
+          console.group("group1");
+          break;
+        case 'Console Group End':
+          console.groupEnd();
+          break;
+        case 'Console Table':
+          const users = [
+            { id: 1, name: 'Alice', age: 25 },
+            { id: 2, name: 'Bob', age: 30 },
+          ];
+          console.table(users);
+          break;
+        case 'Start Timer':
+          console.time("timer");
+          break;
+        case 'End Timer':
+          console.timeEnd("timer");
+          break;
+        case 'Console Trace':
+          function outer() {
+            function inner() {
+              console.trace('Trace Demo');
+            }
+            inner();
+          }
+          outer();
+          break;
+        case 'Trigger a Global Error':
+          try{
+            funkyshun();
+          } catch(err){
+            console.log("Caught a global error:", err.message);
+            if (window.TrackJS) {
+              TrackJS.track(err);
+            }
+          }
+        }
+      });
+    });
+
+
 
     // Start your code here
     // You may move this JS to another file if you wish
